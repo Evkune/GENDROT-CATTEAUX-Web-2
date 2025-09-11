@@ -1,10 +1,10 @@
-1)On doit avoir un écran d'acceuil qui permet de choisir le nom(pseudo) de l'utilisateur ainsi que la map sur laquelle l'utilisateur veut jouer
+1)En tant qu'utilisateur, je dois avoir un écran d'acceuil qui permet de choisir le nom(pseudo) de l'utilisateur ainsi que la map sur laquelle l'utilisateur veut jouer
     -Les maps peuvent être: soit des maps déjà créées par le développeur, soit une map qui se génère de manière aléatoire(le nom est alors aussi aléatoire) et dans ce cas, la map s'ajoute aux maps créées
     -Le choix des maps doit être un choix unique cliquable qui lance directement la partie
-    -La zone où l'utilisateur tape son nom est une zone de texte(validée au lancement de la partie). Avant de cliquer, "PLayer name" est affiché et lorsque l'utilisateur clique, ce texte passe au-dessus (tout en se rétrecissant) et laisse place à la possibilité de taper le vrai pseudo
+    -La zone où l'utilisateur tape son nom est une zone de texte(validée au lancement de la partie). Avant de cliquer, "PLayer name" est affiché et lorsque l'utilisateur clique, ce texte passe au-dessus (tout en se rétrecissant) et laisse place à la possibilité de taper le vrai pseudo(avecc un barre de frappe qui clignotte)
     -Le texte de cet écran est: "Select a map to play with", "Generate a random map"(cliquable) et "Play with {nom de la map}"(cliquable)
 
-2)On doit avoir un écran principal de la partie qui contient:
+2)En tant qu'utilisateur, je dois avoir un écran principal de la partie qui contient:
     -Un plateau de jeu avec des cases au milieu de l'écran
     -Des choix de cases possibles à ajouter en bas à gauche de l'écran
     -Le score de l'utilisateur contenu dans un cercle avec le tour actif en haut à gauche, il y a également le nom du projet (Web2 Frontend)
@@ -12,31 +12,31 @@
     -Une barre horizontale contenant 3 boutons cliquables (Undo/redo et End Game) en bas à droite
     -La case sélectionnée qui apparaît en bas encore plus à droite
 
-3)Le plateau est:
+3)En tant qu'utilisateur, je dois voir le plateau de manière:
     -Carré contenant 100 cases(10*10)
     -En 3d, positionné vers l'utilisateur à 45°
     -Tournable sur 360° en maintenant la souris sur la map et en la déplaçant horizontalement
 
-4)Le plateau contient 3 types de cases:
+4)En tant qu'utilisateur, mon plateau doit contenir 3 types de cases:
     -Des cases vertes représentant une plaine d'herbe
     -Des cases bleues représentant une étendue d'eau
     -Des cases vertes avec des arbres dessus
 
-5)Les cases à placer peuvent être de 3 types:
+5)En tant qu'utilisateur, je dois pouvoir placer 3 types de cases:
     -Un ours pouvant être placé uniquement sur la plaine et les arbres
     -Un renard pouvant être placé uniquement sur la plaine et les arbres
     -Un poisson pouvant être placé que sur les cases eau
 
-6)Quand une case à placer est sélectionnée et que l'on hover sur les cases de la map:
+6)En tant qu'utilisateur, quand j'ai sélectionné une case à placer et que je hover une case du plateau:
     -La case hovered se grise et s'enfonce légèrement
     -Le nombre de points possibles à gagner s'affiche sur la case hovered
     -Selon le type de case (animal) sélectionné, les cases alentours ie son range (2 pour l'ours ie carré de 5*5, 1 pour le poisson et le renard ie carré de 3*3) affichent le nombre de points que l'utilisateur gagne s'il place sa case à l'endroit du curseur
 
-7)Fonctionnement du cercle des points
+7)En tant qu'utilisateur, je dois avoir un cercle de point qui fonctionne de telle manière:
     -Le cercle contient le nombre de points actuels ainsi que le score à atteindre (sous la forme points/score)
     -Le contour du cercle se remplit (se grise) en fonction du pourcentage des points du tour par rapport à la différence entre l'ancien score et le nouveau score 
 
-8)Fonctionnement d'un tour
+8)En tant qu'utilisateur les tours doivent fonctionner de cette manière:
     -Au premier tour, l'utilisateur a à sa disposition une seule case ours à placer
     -À chaque tour suivant, il débloque une case de chaque
     -À chaque tour, l'utilisateur doit atteindre un certain score pour passer au tour suivant (ce score à atteindre est exponentiellement plus grand à chaque tour)
