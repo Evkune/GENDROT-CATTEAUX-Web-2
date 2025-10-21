@@ -1,14 +1,14 @@
 <h1>Plateau</h1>
 
-<div class="board">
-  <ng-container *ngFor="let y of rows; let rowIndex = index">
-    <ng-container *ngFor="let x of cols; let colIndex = index">
+<div class="board" *ngIf="partie">
+  <ng-container *ngFor="let row of partie.map.cases; let rowIndex = index">
+    <ng-container *ngFor="let case of row; let colIndex = index">
       <img
-        src="/plain.svg"
+        [src]="getImageUrl(case.type)"
         class="tile"
-        [style.left.px]="(colIndex - (size - 1 - rowIndex)) * (120 / 2) + 500"
-        [style.top.px]="(colIndex + (size - 1 - rowIndex)) * (69.6 / 2.18) - 15"
-        [style.z-index]="colIndex + (size - 1 - rowIndex)"
+        [style.left.px]="(colIndex - (partie.map.hauteur - 1 - rowIndex)) * (120 / 2) + 500"
+        [style.top.px]="(colIndex + (partie.map.hauteur - 1 - rowIndex)) * (69.6 / 2.18) - 15"
+        [style.z-index]="colIndex + (partie.map.hauteur - 1 - rowIndex)"
       />
     </ng-container>
   </ng-container>
