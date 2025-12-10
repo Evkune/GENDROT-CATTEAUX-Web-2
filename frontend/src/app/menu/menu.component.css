@@ -1,0 +1,21 @@
+.menu-container {
+  max-width: 600px;
+  margin: 50px auto;
+  text-align: center;
+  font-family: BodoAmat, sans-serif;
+}
+.form-group { margin-bottom: 20px; }
+input { padding: 10px; font-size: 1.2em; }
+.actions { margin-bottom: 30px; }
+button { padding: 10px 20px; cursor: pointer; font-size: 1em; }
+.map-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; }
+.map-card {
+  border: 1px solid #ccc;
+  padding: 15px;
+  width: 150px;
+  cursor: pointer;
+  border-radius: 8px;
+  background: #f9f9f9;
+  transition: transform 0.2s;
+}
+.map-card:hover { transform: scale(1.05); background: #e6f7ff; border-color: #1890ff; }

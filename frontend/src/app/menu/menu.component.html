@@ -1,0 +1,20 @@
+<div class="menu-container">
+  <h1>Web2 Game - Menu</h1>
+
+  <div class="form-group">
+    <label>Pseudo :</label>
+    <input type="text" [(ngModel)]="pseudo" placeholder="Votre pseudo">
+  </div>
+
+  <div class="actions">
+    <button (click)="genererCarte()" [disabled]="chargement">Générer une Carte Aléatoire</button>
+  </div>
+
+  <h2>Choisir une carte pour jouer :</h2>
+  <div class="map-list">
+    <div *ngFor="let carte of cartes" class="map-card" (click)="lancerPartie(carte)">
+      <h3>{{ carte.nom }}</h3>
+      <p>Taille: {{ carte.largeur }}x{{ carte.hauteur }}</p>
+    </div>
+  </div>
+</div>
