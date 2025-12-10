@@ -22,7 +22,7 @@ public class CarteService {
     private final Random random = new Random();
 
     public List<Carte> listerCartes() {
-        return carteRepository.findAll();
+        return carteRepository.findByModeleTrue();
     }
 
     @Transactional
@@ -32,6 +32,7 @@ public class CarteService {
         int taille = 8;
 
         Carte carte = new Carte(id, nom, taille, taille);
+        carte.setModele(true);
         List<Case> cases = new ArrayList<>();
 
         for (int y = 0; y < taille; y++) {

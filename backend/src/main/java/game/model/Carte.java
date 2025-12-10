@@ -9,10 +9,10 @@ public class Carte {
 
     @Id
     private String id;
-
     private String nom;
     private int largeur;
     private int hauteur;
+    private boolean modele = false; // Par défaut à false (pour les copies)
 
     @OneToMany(mappedBy = "carte", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Case> cases = new ArrayList<>();
@@ -33,4 +33,6 @@ public class Carte {
     public int getHauteur() { return hauteur; }
     public List<Case> getCases() { return cases; }
     public void setCases(List<Case> cases) { this.cases = cases; }
+    public boolean isModele() { return modele; }
+    public void setModele(boolean modele) { this.modele = modele; }
 }

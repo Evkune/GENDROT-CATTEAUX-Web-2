@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -23,11 +24,26 @@ public class PartieService {
     public Partie demarrerPartie(String carteId, String nomJoueur) {
         Joueur joueur = joueurRepository.findById(nomJoueur)
                 .orElseGet(() -> joueurRepository.save(new Joueur(nomJoueur)));
-
         Carte carteModele = carteRepository.findById(carteId)
                 .orElseThrow(() -> new RuntimeException("Carte non trouvée : " + carteId));
-
-        Partie partie = new Partie(UUID.randomUUID().toString(), joueur, carteModele);
+        Carte copieCarte = new Carte(
+            UUID.randomUUID().toString(), 
+            carteModele.getNom(), 
+            carteModele.getLargeur(), 
+            carteModele.getHauteur()
+        );
+        List<Case> nouvellesCases = new ArrayList<>();
+        for (Case caseModele : carteModele.getCases()) {
+            nouvellesCases.add(new Case(
+                caseModele.getX(), 
+                caseModele.getY(), 
+                caseModele.getType(), 
+                copieCarte
+            ));
+        }
+        copieCarte.setCases(nouvellesCases);
+        Partie partie = new Partie(UUID.randomUUID().toString(), joueur, copieCarte);
+        
         return partieRepository.save(partie);
     }
 

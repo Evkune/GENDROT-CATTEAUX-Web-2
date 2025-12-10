@@ -20,6 +20,7 @@ public class DataLoader {
             String idCarte = "carte-1";
             if (!carteRepository.existsById(idCarte)) {
                 Carte carte = new Carte(idCarte, "Carte Démo", 8, 8);
+                carte.setModele(true);
                 List<Case> cases = new ArrayList<>();
 
                 for (int y = 0; y < 8; y++) {
@@ -36,7 +37,6 @@ public class DataLoader {
                 }
                 carte.setCases(cases);
                 carteRepository.save(carte);
-                System.out.println("--- CARTE PAR DEFAUT (carte-1) INITIALISEE ---");
             }
         };
     }

@@ -1,9 +1,7 @@
 <div class="game-over-overlay" *ngIf="partie?.termine">
   <div class="game-over-content">
     <h1>End game {{ partie?.joueur?.nom }}</h1>
-    
-    <p class="final-score-text">Score: {{ partie?.scoreTotal }}</p>
-    
+    <p class="final-score-text">Score : {{ partie?.scoreTotal }}</p>
     <button class="btn-menu" (click)="quitterPartie()">Return to menu</button>
   </div>
 </div>
@@ -11,14 +9,15 @@
 <div class="board" *ngIf="partie">
   <ng-container *ngFor="let c of partie.carte.cases">
       <div class="tile-container"
-           [style.left.px]="(c.x - (partie.carte.hauteur - 1 - c.y)) * 62 + 500"
-           [style.top.px]="(c.x + (partie.carte.hauteur - 1 - c.y)) * 31 - 15"
+           [style.left.px]="(c.x - (partie.carte.hauteur - 1 - c.y)) * 62.25 + 700"
+           [style.top.px]="(c.x + (partie.carte.hauteur - 1 - c.y)) * 31.125 + 70"
            [style.z-index]="c.x + (partie.carte.hauteur - 1 - c.y)"
            (mouseenter)="calculerApercu(c.x, c.y)" 
            (mouseleave)="effacerApercu()">
            <div class="hitbox" (click)="onCaseClick(c.x, c.y)"></div>
         <img [src]="getImageUrl(c.type)" class="tile-img"/>
         <img *ngIf="c.occupeePar" [src]="getAnimalImage(c.occupeePar)" class="animal-img"/>
+        
         <div class="score-preview" *ngIf="previewMap.has(getKey(c.x, c.y))">
             {{ previewMap.get(getKey(c.x, c.y)) }}
         </div>
@@ -30,32 +29,28 @@
   <div class="animal-card" 
        [class.selected]="animalSelectionne === typeAnimal.OURS" 
        (click)="selectionnerAnimal(typeAnimal.OURS)">
-    <div class="card-visual">
-      <img src="bear.svg" class="card-animal">
-    </div>
+    <div class="card-visual"><img src="bear.svg" class="card-animal"></div>
     <span class="count">{{ partie?.piecesDisponibles ? partie!.piecesDisponibles['OURS'] : 0 }}</span>
   </div>
 
   <div class="animal-card" 
        [class.selected]="animalSelectionne === typeAnimal.POISSON" 
        (click)="selectionnerAnimal(typeAnimal.POISSON)">
-    <div class="card-visual">
-      <img src="fish.svg" class="card-animal">
-    </div>
+    <div class="card-visual"><img src="fish.svg" class="card-animal"></div>
     <span class="count">{{ partie?.piecesDisponibles ? partie!.piecesDisponibles['POISSON'] : 0 }}</span>
   </div>
 
   <div class="animal-card" 
        [class.selected]="animalSelectionne === typeAnimal.RENARD" 
        (click)="selectionnerAnimal(typeAnimal.RENARD)">
-    <div class="card-visual">
-      <img src="fox.svg" class="card-animal">
-    </div>
+    <div class="card-visual"><img src="fox.svg" class="card-animal"></div>
     <span class="count">{{ partie?.piecesDisponibles ? partie!.piecesDisponibles['RENARD'] : 0 }}</span>
   </div>
 </div>
 
 <div class="score-widget">
+  <div class="project-title">Web2 Frontend</div>
+  
   <div class="circular-progress">
     <svg width="220" height="220" viewBox="0 0 100 100">
       <circle class="bg-ring" cx="50" cy="50" r="45"></circle>
@@ -64,13 +59,18 @@
     </svg>
     
     <div class="score-text">
-      <div class="label">Score:</div>
-      
+      <div class="label">Score :</div>
       <div class="values">{{ partie?.scoreTotal || 0 }} / {{ partie?.scoreCible || 0 }}</div>
-      
       <div class="turn">Turn #{{ partie?.tourCourant || 1 }}</div>
     </div>
   </div>
 </div>
 
-<button class="btn-quit" (click)="quitterPartie()">No game</button>
+<div class="info-widget" *ngIf="partie">
+    <div class="map-name">{{ partie.carte.nom }}</div>
+    <div class="player-container">
+        <span class="player-name">{{ partie.joueur.nom }}</span>
+    </div>
+</div>
+
+<button class="btn-end-game" (click)="quitterPartie()">End game</button>
