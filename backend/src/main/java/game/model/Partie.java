@@ -1,8 +1,11 @@
 package game.model;
 
 import javax.persistence.*;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
 
 @Entity
 public class Partie {
@@ -26,7 +29,10 @@ public class Partie {
     @MapKeyEnumerated(EnumType.STRING)
     @Column(name = "quantite")
     private Map<TypeAnimal, Integer> piecesDisponibles = new HashMap<>();
-
+    @ElementCollection
+    private List<Mouvement> historique = new ArrayList<>();
+    @ElementCollection
+    private List<Mouvement> redoStack = new ArrayList<>();
     public Partie() {}
 
     public Partie(String id, Joueur joueur, Carte carte) {
@@ -61,6 +67,12 @@ public class Partie {
         return piecesDisponibles.values().stream().mapToInt(Integer::intValue).sum();
     }
 
+    public List<Mouvement> getHistorique() { return historique; }
+    public void setHistorique(List<Mouvement> historique) { this.historique = historique; }
+
+    public List<Mouvement> getRedoStack() { return redoStack; }
+    public void setRedoStack(List<Mouvement> redoStack) { this.redoStack = redoStack; }
+    
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
     public Joueur getJoueur() { return joueur; }

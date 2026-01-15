@@ -7,22 +7,24 @@
 </div>
 
 <div class="board" *ngIf="partie">
-  <ng-container *ngFor="let c of partie.carte.cases">
-      <div class="tile-container"
-           [style.left.px]="(c.x - (partie.carte.hauteur - 1 - c.y)) * 62.25 + 700"
-           [style.top.px]="(c.x + (partie.carte.hauteur - 1 - c.y)) * 31.125 + 70"
-           [style.z-index]="c.x + (partie.carte.hauteur - 1 - c.y)"
-           (mouseenter)="calculerApercu(c.x, c.y)" 
-           (mouseleave)="effacerApercu()">
-           <div class="hitbox" (click)="onCaseClick(c.x, c.y)"></div>
-        <img [src]="getImageUrl(c.type)" class="tile-img"/>
-        <img *ngIf="c.occupeePar" [src]="getAnimalImage(c.occupeePar)" class="animal-img"/>
-        
-        <div class="score-preview" *ngIf="previewMap.has(getKey(c.x, c.y))">
-            {{ previewMap.get(getKey(c.x, c.y)) }}
-        </div>
-      </div>
-  </ng-container>
+  <ng-container *ngFor="let c of partie.carte.cases; trackBy: trackByCase">
+    
+    <div class="tile-container"
+         [style.left.px]="(c.x - (partie.carte.hauteur - 1 - c.y)) * 62.25 + 700"
+         [style.top.px]="(c.x + (partie.carte.hauteur - 1 - c.y)) * 31.125 + 70"
+         [style.z-index]="c.x + (partie.carte.hauteur - 1 - c.y)"
+         
+         (mouseenter)="calculerApercu(c.x, c.y)" 
+         (mouseleave)="effacerApercu()">
+
+         <div class="hitbox" ioClick (clickBinder)="configurerClic($event, c.x, c.y)"></div>
+         <img [src]="getImageUrl(c.type)" class="tile-img"/>
+         <img *ngIf="c.occupeePar" [src]="getAnimalImage(c.occupeePar)" class="animal-img"/>
+         <div class="score-preview" *ngIf="previewMap.has(getKey(c.x, c.y))">
+             {{ previewMap.get(getKey(c.x, c.y)) }}
+         </div>
+    </div>
+</ng-container>
 </div>
 
 <div class="controls-container" *ngIf="!partie?.termine">
@@ -50,14 +52,12 @@
 
 <div class="score-widget">
   <div class="project-title">Web2 Frontend</div>
-  
   <div class="circular-progress">
     <svg width="220" height="220" viewBox="0 0 100 100">
       <circle class="bg-ring" cx="50" cy="50" r="45"></circle>
       <circle class="progress-ring" cx="50" cy="50" r="45"
               [style.stroke-dashoffset]="getScoreDashOffset()"></circle>
     </svg>
-    
     <div class="score-text">
       <div class="label">Score :</div>
       <div class="values">{{ partie?.scoreTotal || 0 }} / {{ partie?.scoreCible || 0 }}</div>
@@ -73,4 +73,14 @@
     </div>
 </div>
 
-<button class="btn-end-game" (click)="quitterPartie()">End game</button>
+<div class="actions-container">
+  <button class="btn-action" ioUndo>
+    <img src="undo.png" alt="Undo">
+  </button>
+
+  <button class="btn-action" ioRedo>
+    <img src="redo.png" alt="Redo">
+  </button>
+
+  <button class="btn-end-game" (click)="quitterPartie()">End game</button>
+</div>

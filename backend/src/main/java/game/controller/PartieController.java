@@ -40,6 +40,28 @@ public class PartieController {
     
     @GetMapping("/{id}")
     public Partie getPartie(@PathVariable String id) {
-        return null; 
+        try {
+            return partieService.recupererPartie(id);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Partie introuvable");
+        }
+    }
+
+    @PostMapping("/{id}/undo")
+    public Partie undo(@PathVariable String id) {
+        try {
+            return partieService.undo(id);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+    }
+
+    @PostMapping("/{id}/redo")
+    public Partie redo(@PathVariable String id) {
+        try {
+            return partieService.redo(id);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
     }
 }

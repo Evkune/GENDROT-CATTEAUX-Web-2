@@ -13,7 +13,7 @@ import { Carte } from '../models/carte.model';
   styleUrls: ['./menu.component.css']
 })
 export class MenuComponent implements OnInit {
-  pseudo: string = 'Joueur 1';
+  pseudo: string = '';
   cartes: Carte[] = [];
   chargement = false;
 
@@ -36,10 +36,11 @@ export class MenuComponent implements OnInit {
   }
 
   lancerPartie(carte: Carte) {
-    if (!this.pseudo.trim()) {
+    /* if (!this.pseudo.trim()) {
       alert('Veuillez entrer un pseudo');
       return;
     }
+    */
     this.chargement = true;
     this.gameService.demarrerPartie(carte.id, this.pseudo).subscribe({
       next: () => this.router.navigate(['/game']),

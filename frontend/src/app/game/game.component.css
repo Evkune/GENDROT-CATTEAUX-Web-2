@@ -1,4 +1,4 @@
-/* --- LE PLATEAU (inchangé) --- */
+/* --- LE PLATEAU --- */
 .board {
   position: relative;
   width: 100%;
@@ -33,12 +33,10 @@
   position: absolute;
   bottom: 30px;
   left: 30px;
-  
   background-color: #ffffff;
   padding: 15px 25px;
   border-radius: 25px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-  
   display: flex;
   gap: 15px;
   z-index: 100;
@@ -93,7 +91,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px; /* Espace entre le titre et le cercle */
+  gap: 10px;
 }
 
 .project-title {
@@ -159,34 +157,14 @@
     font-weight: bold;
 }
 
-.btn-end-game {
-    position: absolute;
-    bottom: 30px;
-    right: 30px;
-    z-index: 100;
-    
-    background-color: #222;
-    color: white;
-    border: none;
-    padding: 15px 25px;
-    font-size: 1.3rem;
-    border-radius: 12px;
-    cursor: pointer;
-    font-family: 'BodoAmat', sans-serif;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-    transition: transform 0.1s;
-}
-
 .score-preview {
   position: absolute;
   top: 50%; left: 50%;
   transform: translate(-50%, -50%);
-  
   font-family: 'BodoAmat', sans-serif;
   font-size: 1.5rem;
   font-weight: bold;
   color: #000000; 
-  
   z-index: 50;
   pointer-events: none;
   animation: fadeIn 0.1s ease-out;
@@ -195,4 +173,105 @@
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
+}
+
+/* --- ACTIONS GROUP (BAS DROITE) --- */
+.actions-container {
+  position: absolute;
+  bottom: 30px;
+  right: 30px;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 15px; 
+}
+
+.btn-action {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: #ffffff;
+    /* On force une bordure transparente invisible au lieu de changer de taille */
+    border: 2px solid #ccc; 
+    
+    padding: 0;
+    margin: 0;
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    cursor: pointer;
+    transition: transform 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    
+    /* Astuce : Empêche le flou et les décalages de sous-pixels */
+    transform: translateZ(0);
+    overflow: hidden; 
+}
+
+.btn-action:hover:not(:disabled) {
+    transform: scale(1.1);
+    background-color: #f8f9fa;
+    border-color: #222;
+}
+
+.btn-action img {
+    width: 24px;
+    height: 24px;
+    pointer-events: none;
+    display: block; 
+    /* S'assure que l'image ne bouge pas */
+    flex-shrink: 0;
+}
+
+.btn-action:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  filter: grayscale(100%);
+}
+
+.btn-end-game {
+  /* On retire le positionnement absolu pour qu'il soit géré par le flex container */
+  background-color: #222;
+  color: white;
+  border: none;
+  padding: 0 25px;
+  height: 50px; /* Même hauteur que les boutons ronds */
+  font-size: 1.3rem;
+  border-radius: 12px;
+  cursor: pointer;
+  font-family: 'BodoAmat', sans-serif;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  transition: transform 0.1s;
+  display: flex; align-items: center; justify-content: center;
+}
+
+.btn-end-game:hover {
+  transform: scale(1.05);
+  background-color: #000;
+}
+
+.tile-container {
+  position: absolute;
+  width: 120px;
+  height: 70px;
+  pointer-events: none;
+
+  opacity: 0;
+  
+  /* MODIFICATION : Durée passée à 0.8s pour ralentir l'effet */
+  animation: popIn 2.5s cubic-bezier(0.175, 0.885, 0.32, 1) forwards;
+}
+
+/* L'animation popIn reste la même, elle est très bien */
+@keyframes popIn {
+  0% {
+    opacity: 0;
+    transform: scale(0) translateY(20px);
+  }
+  100% {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
 }

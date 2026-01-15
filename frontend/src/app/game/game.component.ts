@@ -5,12 +5,18 @@ import { GameService } from '../game';
 import { Partie } from '../models/partie.model';
 import { TypeCase } from '../models/type-case.enum';
 import { TypeAnimal } from '../models/type-animal.enum';
-import { Case } from '../models/case.model'; // Import nécessaire pour le typage
+import { Case } from '../models/case.model';
+
+// 1. IMPORTS INTERACTO OBLIGATOIRES
+import { InteractoModule } from 'interacto-angular';
+import { PlacerPieceCommand } from '../commands/placer-piece.command';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-game',
   standalone: true,
-  imports: [CommonModule],
+  // 2. IMPORT DU MODULE INTERACTO ICI
+  imports: [CommonModule, InteractoModule], 
   templateUrl: './game.component.html',
   styleUrls: ['./game.component.css']
 })
@@ -19,32 +25,43 @@ export class GameComponent implements OnInit {
   typeCase = TypeCase;
   typeAnimal = TypeAnimal;
   animalSelectionne: TypeAnimal = TypeAnimal.OURS;
-  
-  // Map pour stocker les scores temporaires (clé = "x,y", valeur = score)
   previewMap: Map<string, number> = new Map();
+  private partieSub: Subscription | undefined;
 
-  constructor(private gameService: GameService, private router: Router) {}
+  constructor(
+    private gameService: GameService, 
+    private router: Router
+    // 3. ON RETIRE undoHistory DU CONSTRUCTEUR (Géré par les directives)
+  ) {}
 
   ngOnInit() {
-    this.partie = this.gameService.getPartieCourante();
-    if (!this.partie) {
+    if (!this.gameService.getPartieCourante()) {
       this.router.navigate(['/']);
+      return;
     }
+    this.partie = this.gameService.getPartieCourante();
+    this.partieSub = this.gameService.partieSubject.subscribe(p => {
+      if (p) this.partie = p;
+    });
+  }
+
+  ngOnDestroy() {
+    if (this.partieSub) this.partieSub.unsubscribe();
   }
 
   selectionnerAnimal(animal: TypeAnimal) {
     this.animalSelectionne = animal;
   }
 
-  onCaseClick(x: number, y: number) {
-    if (!this.partie) return;
-    this.gameService.placerPiece(this.animalSelectionne, x, y).subscribe({
-      next: (p) => {
-        this.partie = p;
-        this.effacerApercu(); // On efface l'aperçu après avoir joué
-      },
-      error: (err) => alert(`Placement impossible : ${err.error?.message || err.message}`)
-    });
+  // 4. NOUVELLE MÉTHODE (BINDER) REMPLAÇANT onCaseClick
+  // C'est celle demandée par le prof pour configurer le clic
+  // CORRECTION : Utilisez 'any' pour le binder
+  public configurerClic(binder: any, x: number, y: number): void {
+    binder
+      .toProduce(() => new PlacerPieceCommand(this.gameService, this.animalSelectionne, x, y))
+      // AJOUT : La commande ne se déclenche QUE si on a des pièces > 0
+      .when(() => (this.partie?.piecesDisponibles[this.animalSelectionne] || 0) > 0)
+      .bind();
   }
 
   getImageUrl(caseType: TypeCase): string {
@@ -91,12 +108,9 @@ export class GameComponent implements OnInit {
     
     const avancement = this.getScoreRelatif();
     const pourcentage = Math.min(avancement / objectif, 1);
-    
     const circonference = 283; 
     return circonference - (pourcentage * circonference);
   }
-
-  // --- LOGIQUE DE PREVISUALISATION DU SCORE ---
 
   getKey(x: number, y: number): string {
     return `${x},${y}`;
@@ -106,76 +120,46 @@ export class GameComponent implements OnInit {
     return this.partie?.carte.cases.find(c => c.x === x && c.y === y);
   }
 
+  // Cette fonction permet à Angular d'identifier chaque case de manière unique
+  trackByCase(c: any): string {
+    return `${c.x}-${c.y}`;
+  }
+
   effacerApercu() {
     this.previewMap.clear();
   }
 
-  /**
-   * Récupère les cases voisines dans un rayon donné (carré).
-   * @param cX Coordonnée X du centre
-   * @param cY Coordonnée Y du centre
-   * @param radius Rayon de recherche
-   */
-  getCasesInRadius(cX: number, cY: number, radius: number): Case[] {
-    const cases: Case[] = [];
-    if (!this.partie) return cases;
-
-    for (let x = cX - radius; x <= cX + radius; x++) {
-        for (let y = cY - radius; y <= cY + radius; y++) {
-            if (x === cX && y === cY) continue; // On ignore la case centrale
-            
-            const c = this.trouverCase(x, y);
-            if (c) cases.push(c);
-        }
-    }
-    return cases;
-  }
-
-calculerApercu(targetX: number, targetY: number) {
+  calculerApercu(targetX: number, targetY: number) {
     this.effacerApercu();
     if (!this.partie || !this.animalSelectionne) return;
 
+    const nbRestant = this.partie.piecesDisponibles[this.animalSelectionne] || 0;
+    if (nbRestant <= 0) {
+        return;
+    }
+
     const caseVisee = this.trouverCase(targetX, targetY);
-    
-    // 1. Validation du placement
     if (!caseVisee || caseVisee.occupeePar) return;
     if (this.animalSelectionne === TypeAnimal.POISSON && caseVisee.type !== TypeCase.EAU) return;
     if (this.animalSelectionne !== TypeAnimal.POISSON && caseVisee.type === TypeCase.EAU) return;
 
-    // 2. Configuration selon l'animal
     let baseScore = 0;
     let rayon = 0;
 
     switch (this.animalSelectionne) {
-      case TypeAnimal.OURS:
-        baseScore = 6;
-        rayon = 2;
-        break;
-      case TypeAnimal.POISSON:
-        baseScore = 8;
-        rayon = 1;
-        break;
-      case TypeAnimal.RENARD:
-        baseScore = 5;
-        rayon = 1;
-        break;
+      case TypeAnimal.OURS: baseScore = 6; rayon = 2; break;
+      case TypeAnimal.POISSON: baseScore = 8; rayon = 1; break;
+      case TypeAnimal.RENARD: baseScore = 5; rayon = 1; break;
     }
 
-    // 3. Affichage du score de base sur la case survolée (HOVER)
     this.previewMap.set(this.getKey(targetX, targetY), baseScore);
 
-    // 4. Calcul des bonus/malus des voisins
     for (let x = targetX - rayon; x <= targetX + rayon; x++) {
       for (let y = targetY - rayon; y <= targetY + rayon; y++) {
-        
-        // On ignore la case centrale (déjà gérée avec le baseScore)
         if (x === targetX && y === targetY) continue;
-
         const voisin = this.trouverCase(x, y);
-        
         if (voisin) {
           let contribution = 0;
-
           switch (this.animalSelectionne) {
             case TypeAnimal.OURS:
               if (voisin.type === TypeCase.ARBRE) contribution += 4;
@@ -183,19 +167,15 @@ calculerApercu(targetX: number, targetY: number) {
               else if (voisin.occupeePar === TypeAnimal.RENARD) contribution -= 2;
               else if (voisin.occupeePar === TypeAnimal.OURS) contribution -= 5;
               break;
-
             case TypeAnimal.POISSON:
               if (voisin.type === TypeCase.EAU) contribution += 5;
               if (voisin.occupeePar === TypeAnimal.POISSON) contribution -= 2;
               break;
-
             case TypeAnimal.RENARD:
               if (voisin.type === TypeCase.PLAINE) contribution += 7;
               if (voisin.occupeePar === TypeAnimal.RENARD) contribution -= 2;
               break;
           }
-
-          // On n'affiche QUE si la case apporte quelque chose (positif ou négatif)
           if (contribution !== 0) {
             this.previewMap.set(this.getKey(x, y), contribution);
           }
